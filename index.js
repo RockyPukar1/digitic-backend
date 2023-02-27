@@ -3,7 +3,6 @@ const dbConnect = require("./config/dbConnect");
 const { notFound, errorHandler } = require("./middlewares/errorHandler");
 const app = express();
 const dotenv = require("dotenv").config();
-const PORT = process.env.PORT || 4000;
 const authRouter = require("./routes/authRoutes");
 
 dbConnect();
@@ -17,11 +16,11 @@ app.use('/api/user', authRouter);
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(PORT, 'localhost', (err) => {
+app.listen(9000, 'localhost', (err) => {
     if (err) {
-        console.log(`Error listening to PORT ${PORT}`);
+        console.log(`Error listening to PORT 9000`);
     } else {
-        console.log(`Server is running at PORT ${PORT}`);
+        console.log(`Server is running at PORT 9000`);
         console.log("Press CTRL+C to end the server");
     }
 })
