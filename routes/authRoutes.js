@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const {createUser, loginUserCtrl, getAllUser, getAUser, deleteAUser, updateAUser} = require("../controller/userCtrl")
+const {createUser, loginUserCtrl, getAllUser, getAUser, deleteAUser, updateAUser} = require("../controller/userCtrl");
+const {authMiddleware} = require("../middlewares/authMiddleware");
 
 router.route('/register')
     .post(createUser);
@@ -12,7 +13,7 @@ router.route("/get-users")
     .get(getAllUser)
 
 router.route("/:id")
-    .get(getAUser)
+    .get(authMiddleware, getAUser)
 
 router.route("/:id")
     .delete(deleteAUser)
