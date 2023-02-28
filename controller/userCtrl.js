@@ -24,6 +24,7 @@ const loginUserCtrl = asyncHandler(async (req, res, next) => {
     if (findUser && await findUser.isPasswordMatched(password)) {
         res.json({
             _id: findUser._id,
+            firstname: findUser.firstname,
             lastname: findUser.lastname,
             email: findUser.email,
             mobile: findUser.mobile,
@@ -44,7 +45,27 @@ const getAllUser = asyncHandler(async (req, res, next) => {
     }
 })
 
-// Get a user
+// Update a user by ID
+const updateAUser = asyncHandler(async(req, res, next) => {
+    const {id} = req.params;
+    const {firstname, lastname, mobile, password, role} = req.body;
+    try {
+        const updateAUser = await User.findByIdAndUpdate(id, {
+            firstname,
+            lastname,
+            password,
+            mobile,
+            role
+        }, {
+            new: true
+        });
+        res.json(updateAUser)
+    }catch(error) {
+        throw new Error(error);
+    }
+})
+
+// Get a user by ID
 const getAUser = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     try {
@@ -53,7 +74,20 @@ const getAUser = asyncHandler(async (req, res, next) => {
             getAUser
         })
     } catch (error) {
-        throw new Error(err);
+        throw new Error(error);
+    }
+})
+
+// Delete a user by ID
+const deleteAUser = asyncHandler(async(req, res, next) => {
+    const {id} = req.params;
+    try {
+        const deleteAUser = await User.findByIdAndDelete(id);
+        res.json({
+            deleteAUser
+        })
+    } catch(error) {
+        throw new Error(error);
     }
 })
 
@@ -61,5 +95,7 @@ module.exports = {
     createUser,
     loginUserCtrl,
     getAllUser,
-    getAUser
+    getAUser,
+    deleteAUser,
+    updateAUser
 }
