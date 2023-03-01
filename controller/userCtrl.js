@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const asyncHandler = require("express-async-handler");
 const { generateToken } = require("../config/jwToken");
+const validateMongodbId = require("../utils/validateMongodbId")
 
 // Create a user
 const createUser = asyncHandler(async (req, res, next) => {
@@ -46,11 +47,11 @@ const getAllUser = asyncHandler(async (req, res, next) => {
 })
 
 // Update a user by ID
-const updateAUser = asyncHandler(async(req, res, next) => {
-    const {id} = req.params;
-    const {firstname, lastname, mobile, password, role} = req.body;
+const updateAUser = asyncHandler(async (req, res, next) => {
+    const { _id } = req.user;
+    const { firstname, lastname, mobile, password, role } = req.body;
     try {
-        const updateAUser = await User.findByIdAndUpdate(id, {
+        const updateAUser = await User.findByIdAndUpdate(_id, {
             firstname,
             lastname,
             password,
@@ -60,7 +61,7 @@ const updateAUser = asyncHandler(async(req, res, next) => {
             new: true
         });
         res.json(updateAUser)
-    }catch(error) {
+    } catch (error) {
         throw new Error(error);
     }
 })
@@ -68,6 +69,7 @@ const updateAUser = asyncHandler(async(req, res, next) => {
 // Get a user by ID
 const getAUser = asyncHandler(async (req, res, next) => {
     const { id } = req.params;
+    validateMongodbId(id);
     try {
         const getAUser = await User.findById(id);
         res.json({
@@ -79,14 +81,49 @@ const getAUser = asyncHandler(async (req, res, next) => {
 })
 
 // Delete a user by ID
-const deleteAUser = asyncHandler(async(req, res, next) => {
-    const {id} = req.params;
+const deleteAUser = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    validateMongodbId(id);
     try {
         const deleteAUser = await User.findByIdAndDelete(id);
         res.json({
             deleteAUser
         })
-    } catch(error) {
+    } catch (error) {
+        throw new Error(error);
+    }
+})
+
+// Block a user by Id
+const blockAUser = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    validateMongodbId(id);
+    try {
+        const block = await User.findByIdAndUpdate(id, {
+            isBlocked: true
+        }, {
+            new: true
+        });
+        res.json({
+            message: "User blocked"
+        })
+    } catch (error) {
+        throw new Error(error);
+    }
+})
+
+// Unblock a user by Id
+const unblockAUser = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    validateMongodbId(id);
+    try {
+        const unblock = await User.findByIdAndUpdate(id, {
+            isBlocked: false
+        }, {
+            new: true
+        })
+        res.json("User unblocked")
+    } catch (error) {
         throw new Error(error);
     }
 })
@@ -97,5 +134,7 @@ module.exports = {
     getAllUser,
     getAUser,
     deleteAUser,
-    updateAUser
+    updateAUser,
+    blockAUser,
+    unblockAUser
 }
