@@ -1,8 +1,9 @@
 const User = require("../models/userModel");
 const asyncHandler = require("express-async-handler");
 const { generateToken } = require("../config/jwToken");
-const validateMongodbId = require("../utils/validateMongodbId")
-
+const validateMongodbId = require("../utils/validateMongodbId");
+const generateRefreshToken = require("../config/refreshToken");
+const jwt = require("jsonwebtoken");
 // Create a user
 const createUser = asyncHandler(async (req, res, next) => {
     const email = req.email;
@@ -23,6 +24,16 @@ const loginUserCtrl = asyncHandler(async (req, res, next) => {
     // check if user exists or not
     const findUser = await User.findOne({ email });
     if (findUser && await findUser.isPasswordMatched(password)) {
+        const refreshToken = await generateRefreshToken(findUser._id);
+        const updateUser = await User.findByIdAndUpdate(findUser.id, {
+            refreshToken
+        }, {
+            new: true
+        });
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            maxAge: 72 * 60 * 60 * 1000
+        })
         res.json({
             _id: findUser._id,
             firstname: findUser.firstname,
@@ -34,6 +45,26 @@ const loginUserCtrl = asyncHandler(async (req, res, next) => {
     } else {
         throw new Error("Invalid Credentials");
     }
+})
+
+// handle refresh token
+const handleRefreshToken = asyncHandler(async(req, res, next) => {
+    const cookie = req.cookies;
+    if (!cookie.refreshToken) {
+        throw new Error("No Refresh Token in Cookies");
+    }
+    const refreshToken = cookie.refreshToken;
+    const user = await User.findOne({refreshToken});
+    if (!user) {
+        throw new Error("No Refresh Token present in db or not matched");
+    }
+    jwt.verify(refreshToken, process.env.JWT_SECRET, (err, decoded) => {
+        if (err || (user.id !== decoded.id)) {
+            throw new Error("There is something wrong with refresh token");
+        }
+        const accessToken = generateToken(user._id);
+        res.json({accessToken});
+    });
 })
 
 // Get all users
@@ -136,5 +167,6 @@ module.exports = {
     deleteAUser,
     updateAUser,
     blockAUser,
-    unblockAUser
+    unblockAUser,
+    handleRefreshToken
 }

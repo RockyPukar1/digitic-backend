@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {createUser, loginUserCtrl, getAllUser, getAUser, deleteAUser, updateAUser, blockAUser, unblockAUser} = require("../controller/userCtrl");
+const {createUser, loginUserCtrl, getAllUser, getAUser, deleteAUser, updateAUser, blockAUser, unblockAUser, handleRefreshToken} = require("../controller/userCtrl");
 const {authMiddleware, isAdmin} = require("../middlewares/authMiddleware");
 
 // Register a user
@@ -16,11 +16,11 @@ router.route("/get-users")
     .get(getAllUser)
 
 // Get a user by Id
-router.route("/:id")
+router.route("/get-user/:id")
     .get(authMiddleware, isAdmin, getAUser)
 
 // Delete a user by Id   
-router.route("/:id")
+router.route("/delete-user/:id")
     .delete(deleteAUser)
 
 // Update a user by Id
@@ -32,5 +32,8 @@ router.route("/block-user/:id")
 
 router.route("/unblock-user/:id")
     .put(authMiddleware, isAdmin, unblockAUser)
+
+router.route("/refresh")
+    .get(handleRefreshToken)
 
 module.exports = router;
