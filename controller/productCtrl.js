@@ -37,7 +37,7 @@ const deleteProduct = asyncHandler(async (req, res, next) => {
     try {
         const deleteProduct = await Product.findByIdAndDelete(id);
         res.json(deleteProduct);
-    } catch(error) {
+    } catch (error) {
         throw new Error(error);
     }
 })
@@ -56,7 +56,14 @@ const getAProduct = asyncHandler(async (req, res, next) => {
 // Get all Product
 const getAllProducts = asyncHandler(async (req, res, next) => {
     try {
-        const getAllProduct = await Product.find();
+        const queryObj = {...req.query};
+        console.log(queryObj);
+        // const getAllProduct = await Product.find({ // can fetch based on query on multiple filter
+        //     brand: req.query.brand,
+        //     category: req.query.category
+        // });
+        // const getAllProduct = await Product.find(req.query); // can fetch query based on any request query
+        const getAllProduct = await Product.where("category").equals(req.query.category); //specific for only one filter
         res.json(getAllProduct)
     } catch (error) {
         throw new Error(error);
