@@ -6,9 +6,11 @@ const dotenv = require("dotenv").config();
 const authRouter = require("./routes/authRoutes");
 const productRouter = require("./routes/productRoutes");
 const cookieParser = require("cookie-parser");
+const morgan = require("morgan");
 
 dbConnect();
 
+app.use(morgan('dev', ));
 app.use(express.json());
 app.use(express.urlencoded({
     extended: false
