@@ -13,7 +13,7 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
                 req.user = user;
                 next();
             }
-        } catch(error) {
+        } catch (error) {
             throw new Error("Not Authorized token expired. Please login again")
         }
     } else {
@@ -21,9 +21,9 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
     }
 });
 
-const isAdmin = asyncHandler(async(req, res, next) => {
-    const {email} = req.user;
-    const adminUser = await User.findOne({email});
+const isAdmin = asyncHandler(async (req, res, next) => {
+    const { email } = req.user;
+    const adminUser = await User.findOne({ email });
     if (adminUser.role !== 'admin') {
         throw new Error('You are not an admin');
     } else {
@@ -31,7 +31,7 @@ const isAdmin = asyncHandler(async(req, res, next) => {
     }
 })
 
-module.exports= {
+module.exports = {
     authMiddleware,
     isAdmin
 };

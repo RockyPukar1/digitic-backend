@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const {createUser, loginUserCtrl, getAllUser, getAUser, deleteAUser, updateAUser, blockAUser, unblockAUser, handleRefreshToken, logout} = require("../controller/userCtrl");
-const {authMiddleware, isAdmin} = require("../middlewares/authMiddleware");
+const { createUser, loginUserCtrl, getAllUser, getAUser, deleteAUser, updateAUser, blockAUser, unblockAUser, handleRefreshToken, logout } = require("../controller/userCtrl");
+const { authMiddleware, isAdmin } = require("../middlewares/authMiddleware");
 
 // Register a user
 router.route('/register')
@@ -27,15 +27,19 @@ router.route("/delete-user/:id")
 router.route("/edit-user")
     .put(authMiddleware, updateAUser)
 
+// Block a user by Id
 router.route("/block-user/:id")
     .put(authMiddleware, isAdmin, blockAUser)
 
+// Unblock a user by id
 router.route("/unblock-user/:id")
     .put(authMiddleware, isAdmin, unblockAUser)
 
+// Refresh token
 router.route("/refresh")
     .get(handleRefreshToken)
 
+// Logout a user
 router.route("/logout")
     .get(logout)
 

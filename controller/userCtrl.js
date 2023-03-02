@@ -48,13 +48,13 @@ const loginUserCtrl = asyncHandler(async (req, res, next) => {
 })
 
 // handle refresh token
-const handleRefreshToken = asyncHandler(async(req, res, next) => {
+const handleRefreshToken = asyncHandler(async (req, res, next) => {
     const cookie = req.cookies;
     if (!cookie.refreshToken) {
         throw new Error("No Refresh Token in Cookies");
     }
     const refreshToken = cookie.refreshToken;
-    const user = await User.findOne({refreshToken});
+    const user = await User.findOne({ refreshToken });
     if (!user) {
         throw new Error("No Refresh Token present in db or not matched");
     }
@@ -63,7 +63,7 @@ const handleRefreshToken = asyncHandler(async(req, res, next) => {
             throw new Error("There is something wrong with refresh token");
         }
         const accessToken = generateToken(user._id);
-        res.json({accessToken});
+        res.json({ accessToken });
     });
 })
 
@@ -160,21 +160,20 @@ const unblockAUser = asyncHandler(async (req, res, next) => {
 })
 
 // Logout Functionality
-const logout = asyncHandler(async(req, res, next) => {
+const logout = asyncHandler(async (req, res, next) => {
     const cookie = req.cookies;
     console.log(cookie);
     if (!cookie.refreshToken) {
         throw new Error("No Refresh Token in Cookies");
     }
     const refreshToken = cookie.refreshToken;
-    const user = await User.findOne({refreshToken});
+    const user = await User.findOne({ refreshToken });
     if (!user) {
         res.clearCookie('refreshToken', {
             httpOnly: true,
             secure: true
         });
-        return res.sendStatus(204);
-        us(204); // forbidden
+        res.sendStatus(204);
     }
     await User.findOneAndUpdate(refreshToken, {
         refreshToken: ""
