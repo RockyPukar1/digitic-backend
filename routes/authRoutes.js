@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {createUser, loginUserCtrl, getAllUser, getAUser, deleteAUser, updateAUser, blockAUser, unblockAUser, handleRefreshToken} = require("../controller/userCtrl");
+const {createUser, loginUserCtrl, getAllUser, getAUser, deleteAUser, updateAUser, blockAUser, unblockAUser, handleRefreshToken, logout} = require("../controller/userCtrl");
 const {authMiddleware, isAdmin} = require("../middlewares/authMiddleware");
 
 // Register a user
@@ -35,5 +35,8 @@ router.route("/unblock-user/:id")
 
 router.route("/refresh")
     .get(handleRefreshToken)
+
+router.route("/logout")
+    .get(logout)
 
 module.exports = router;

@@ -159,6 +159,33 @@ const unblockAUser = asyncHandler(async (req, res, next) => {
     }
 })
 
+// Logout Functionality
+const logout = asyncHandler(async(req, res, next) => {
+    const cookie = req.cookies;
+    console.log(cookie);
+    if (!cookie.refreshToken) {
+        throw new Error("No Refresh Token in Cookies");
+    }
+    const refreshToken = cookie.refreshToken;
+    const user = await User.findOne({refreshToken});
+    if (!user) {
+        res.clearCookie('refreshToken', {
+            httpOnly: true,
+            secure: true
+        });
+        return res.sendStatus(204);
+        us(204); // forbidden
+    }
+    await User.findOneAndUpdate(refreshToken, {
+        refreshToken: ""
+    });
+    res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: true
+    });
+    res.sendStatus(204); // forbidden
+})
+
 module.exports = {
     createUser,
     loginUserCtrl,
@@ -168,5 +195,6 @@ module.exports = {
     updateAUser,
     blockAUser,
     unblockAUser,
-    handleRefreshToken
+    handleRefreshToken,
+    logout
 }
