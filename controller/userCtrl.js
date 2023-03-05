@@ -5,6 +5,7 @@ const validateMongodbId = require("../utils/validateMongodbId");
 const generateRefreshToken = require("../config/refreshToken");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("./emailCtrl");
+const crypto = require("crypto");
 // Create a user
 const createUser = asyncHandler(async (req, res, next) => {
     const email = req.email;
@@ -186,6 +187,7 @@ const logout = asyncHandler(async (req, res, next) => {
     res.sendStatus(204); // forbidden
 })
 
+// Update password
 const updatePassword = asyncHandler(async (req, res, next) => {
     const { _id } = req.user;
     const { password } = req.body;
@@ -200,9 +202,10 @@ const updatePassword = asyncHandler(async (req, res, next) => {
     }
 })
 
+// Get a password reset link
 const forgotPasswordToken = asyncHandler(async (req, res, next) => {
     const { email } = req.body;
-    const user = await User.findOne({email});
+    const user = await User.findOne({ email });
     if (!user) {
         throw new Error("User not found with this email");
     }
@@ -218,9 +221,28 @@ const forgotPasswordToken = asyncHandler(async (req, res, next) => {
         };
         sendEmail(data);
         res.json(token);
-    } catch(error) {
+    } catch (error) {
         throw new Error(error);
     }
+})
+
+// Reset Password
+const resetPassword = asyncHandler(async (req, res, next) => {
+    const { password } = req.body;
+    const { token } = req.params;
+    const hashedToken = crypto.createHash('sha256').update(token).digest("hex");
+    const user = await User.findOne({
+        passwordResetToken: hashedToken,
+        passwordResetExpires: {$gt: Date.now()}
+    });
+    if (!user) {
+        throw new Error("Token expired, Please try again later");
+    }
+    user.password = password;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+    res.json(user);
 })
 
 module.exports = {
@@ -235,5 +257,6 @@ module.exports = {
     handleRefreshToken,
     logout,
     updatePassword,
-    forgotPasswordToken
+    forgotPasswordToken,
+    resetPassword
 }
