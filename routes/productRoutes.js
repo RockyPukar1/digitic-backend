@@ -1,5 +1,5 @@
 const express = require("express");
-const { createProduct, getAProduct, getAllProducts, updateProduct, deleteProduct } = require("../controller/productCtrl");
+const { createProduct, getAProduct, getAllProducts, updateProduct, deleteProduct, addToWishlist } = require("../controller/productCtrl");
 const router = express.Router();
 const { isAdmin, authMiddleware } = require("../middlewares/authMiddleware");
 
@@ -9,7 +9,9 @@ router.route("/create")
 router.route('/get-all')
     // Get all Products
     .get(getAllProducts)
-
+router.route("/wishlist")
+    // Add to wishlist
+    .put(authMiddleware, addToWishlist)
 router.route("/get-one/:id")
     // Get a Product by Id
     .get(getAProduct)

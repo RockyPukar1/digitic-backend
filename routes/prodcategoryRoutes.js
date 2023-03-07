@@ -3,7 +3,7 @@ const { createCategory, udpateCategory, getACategory, getAllCategory, deleteACat
 const { authMiddleware, isAdmin } = require("../middlewares/authMiddleware");
 const router = express.Router();
 
-// Create a product
+// Create a product category
 router.route('/create')
     .post(authMiddleware, isAdmin, createCategory)
 
