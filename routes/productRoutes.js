@@ -3,20 +3,20 @@ const { createProduct, getAProduct, getAllProducts, updateProduct, deleteProduct
 const router = express.Router();
 const { isAdmin, authMiddleware } = require("../middlewares/authMiddleware");
 
-router.route("/")
+router.route("/create")
     // Create a product
     .post(authMiddleware, isAdmin, createProduct)
-
+router.route('/get-all')
     // Get all Products
     .get(getAllProducts)
 
-router.route("/:id")
+router.route("/get-one/:id")
     // Get a Product by Id
     .get(getAProduct)
-
+router.route("/edit-one/:id")
     // Update a product by Id
     .put(authMiddleware, isAdmin, updateProduct)
-    
+router.route("/delete-one/:id")
     // Delete a product by Id
     .delete(authMiddleware, isAdmin, deleteProduct)
 
