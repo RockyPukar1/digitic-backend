@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const sendEmail = require("./emailCtrl");
 const crypto = require("crypto");
 // Create a user
-const createUser = asyncHandler(async (req, res, next) => {
+const createUser = asyncHandler(async (req, res) => {
     const email = req.email;
     const findUser = await User.findOne({ email });
     if (!findUser) {
@@ -21,7 +21,7 @@ const createUser = asyncHandler(async (req, res, next) => {
 })
 
 // Login a user
-const loginUserCtrl = asyncHandler(async (req, res, next) => {
+const loginUserCtrl = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     // check if user exists or not
     const findUser = await User.findOne({ email });
@@ -50,7 +50,7 @@ const loginUserCtrl = asyncHandler(async (req, res, next) => {
 })
 
 // handle refresh token
-const handleRefreshToken = asyncHandler(async (req, res, next) => {
+const handleRefreshToken = asyncHandler(async (req, res) => {
     const cookie = req.cookies;
     if (!cookie.refreshToken) {
         throw new Error("No Refresh Token in Cookies");
@@ -70,7 +70,7 @@ const handleRefreshToken = asyncHandler(async (req, res, next) => {
 })
 
 // Get all users
-const getAllUser = asyncHandler(async (req, res, next) => {
+const getAllUser = asyncHandler(async (req, res) => {
     try {
         const getUsers = await User.find()
         res.json(getUsers)
@@ -80,7 +80,7 @@ const getAllUser = asyncHandler(async (req, res, next) => {
 })
 
 // Update a user by ID
-const updateAUser = asyncHandler(async (req, res, next) => {
+const updateAUser = asyncHandler(async (req, res) => {
     const { _id } = req.user;
     const { firstname, lastname, mobile, password, role } = req.body;
     try {
@@ -100,7 +100,7 @@ const updateAUser = asyncHandler(async (req, res, next) => {
 })
 
 // Get a user by ID
-const getAUser = asyncHandler(async (req, res, next) => {
+const getAUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
     validateMongodbId(id);
     try {
@@ -114,7 +114,7 @@ const getAUser = asyncHandler(async (req, res, next) => {
 })
 
 // Delete a user by ID
-const deleteAUser = asyncHandler(async (req, res, next) => {
+const deleteAUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
     validateMongodbId(id);
     try {
@@ -128,7 +128,7 @@ const deleteAUser = asyncHandler(async (req, res, next) => {
 })
 
 // Block a user by Id
-const blockAUser = asyncHandler(async (req, res, next) => {
+const blockAUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
     validateMongodbId(id);
     try {
@@ -146,7 +146,7 @@ const blockAUser = asyncHandler(async (req, res, next) => {
 })
 
 // Unblock a user by Id
-const unblockAUser = asyncHandler(async (req, res, next) => {
+const unblockAUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
     validateMongodbId(id);
     try {
@@ -162,7 +162,7 @@ const unblockAUser = asyncHandler(async (req, res, next) => {
 })
 
 // Logout Functionality
-const logout = asyncHandler(async (req, res, next) => {
+const logout = asyncHandler(async (req, res) => {
     const cookie = req.cookies;
     console.log(cookie);
     if (!cookie.refreshToken) {
@@ -188,7 +188,7 @@ const logout = asyncHandler(async (req, res, next) => {
 })
 
 // Update password
-const updatePassword = asyncHandler(async (req, res, next) => {
+const updatePassword = asyncHandler(async (req, res) => {
     const { _id } = req.user;
     const { password } = req.body;
     validateMongodbId(_id);
@@ -203,7 +203,7 @@ const updatePassword = asyncHandler(async (req, res, next) => {
 })
 
 // Get a password reset link
-const forgotPasswordToken = asyncHandler(async (req, res, next) => {
+const forgotPasswordToken = asyncHandler(async (req, res) => {
     const { email } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
@@ -227,7 +227,7 @@ const forgotPasswordToken = asyncHandler(async (req, res, next) => {
 })
 
 // Reset Password
-const resetPassword = asyncHandler(async (req, res, next) => {
+const resetPassword = asyncHandler(async (req, res) => {
     const { password } = req.body;
     const { token } = req.params;
     const hashedToken = crypto.createHash('sha256').update(token).digest("hex");

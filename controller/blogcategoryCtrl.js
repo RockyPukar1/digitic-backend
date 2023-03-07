@@ -3,7 +3,7 @@ const asyncHandler = require("express-async-handler");
 const validateMongodbId = require("../utils/validateMongodbId");
 
 // Create a category
-const createCategory = asyncHandler(async (req, res, next) => {
+const createCategory = asyncHandler(async (req, res) => {
     let data = req.body;
     try {
         const newCategory = await BCategory.create(data);
@@ -14,9 +14,9 @@ const createCategory = asyncHandler(async (req, res, next) => {
 })
 
 // Update a cateogory by ID
-const udpateCategory = asyncHandler(async (req, res, next) => {
+const udpateCategory = asyncHandler(async (req, res) => {
     let data = req.body;
-    let {id} = req.params;
+    let { id } = req.params;
     validateMongodbId(id);
     try {
         const updateCategory = await BCategory.findByIdAndUpdate(id, data, {
@@ -29,8 +29,8 @@ const udpateCategory = asyncHandler(async (req, res, next) => {
 })
 
 // Get A Product by ID
-const getACategory = asyncHandler(async (req, res, next) => {
-    let {id} = req.params;
+const getACategory = asyncHandler(async (req, res) => {
+    let { id } = req.params;
     validateMongodbId(id);
     try {
         const getACategory = await BCategory.findById(id);
@@ -41,7 +41,7 @@ const getACategory = asyncHandler(async (req, res, next) => {
 })
 
 // Get all category
-const getAllCategory = asyncHandler(async (req, res, next) => {
+const getAllCategory = asyncHandler(async (req, res) => {
     try {
         const getAllCategory = await BCategory.find();
         res.json(getAllCategory);
@@ -50,8 +50,8 @@ const getAllCategory = asyncHandler(async (req, res, next) => {
     }
 })
 
-const deleteACategory = asyncHandler(async (req, res, next) => {
-    let {id} = req.params;
+const deleteACategory = asyncHandler(async (req, res) => {
+    let { id } = req.params;
     validateMongodbId(id);
     try {
         const deleteACategory = await BCategory.findByIdAndDelete(id);

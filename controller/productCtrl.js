@@ -4,7 +4,7 @@ const slugify = require("slugify");
 const User = require("../models/userModel");
 
 // Create a New Product
-const createProduct = asyncHandler(async (req, res, next) => {
+const createProduct = asyncHandler(async (req, res) => {
     try {
         if (req.body.title) {
             req.body.slug = slugify(req.body.title);
@@ -17,7 +17,7 @@ const createProduct = asyncHandler(async (req, res, next) => {
 })
 
 // Update a product by Id
-const updateProduct = asyncHandler(async (req, res, next) => {
+const updateProduct = asyncHandler(async (req, res) => {
     const { id } = req.params;
     try {
         if (req.body.title) {
@@ -33,7 +33,7 @@ const updateProduct = asyncHandler(async (req, res, next) => {
 })
 
 // Delete product by Id
-const deleteProduct = asyncHandler(async (req, res, next) => {
+const deleteProduct = asyncHandler(async (req, res) => {
     const { id } = req.params;
     try {
         const deleteProduct = await Product.findByIdAndDelete(id);
@@ -44,7 +44,7 @@ const deleteProduct = asyncHandler(async (req, res, next) => {
 })
 
 // Get a Product by Id
-const getAProduct = asyncHandler(async (req, res, next) => {
+const getAProduct = asyncHandler(async (req, res) => {
     const { id } = req.params;
     try {
         const findProduct = await Product.findById(id);
@@ -55,7 +55,7 @@ const getAProduct = asyncHandler(async (req, res, next) => {
 })
 
 // Get all Product
-const getAllProducts = asyncHandler(async (req, res, next) => {
+const getAllProducts = asyncHandler(async (req, res) => {
     try {
         // Filtering
         const queryObj = { ...req.query };
@@ -103,7 +103,7 @@ const getAllProducts = asyncHandler(async (req, res, next) => {
 })
 
 // Add to wishlist
-const addToWishlist = asyncHandler(async (req, res, next) => {
+const addToWishlist = asyncHandler(async (req, res) => {
     const { _id } = req.user;
     const { prodId } = req.body;
     try {
@@ -129,11 +129,55 @@ const addToWishlist = asyncHandler(async (req, res, next) => {
     }
 })
 
+// Rating a product
+const rating = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    const { star, prodId } = req.body;
+    try {
+        const product = await Product.findById(prodId);
+        let alreadyRated = product.ratings.find(userId => userId.postedby.toString() === _id.toString());
+        if (alreadyRated) {
+            const updateRating = await Product.updateOne({
+                ratings: {$elemMatch: alreadyRated}
+            }, {
+                $set: {"ratings.$.star": star }
+            }, {
+                new: true
+            })
+        } else {
+            const rateProduct = await Product.findByIdAndUpdate(prodId, {
+                $push: {
+                    ratings: {
+                        star: star,
+                        postedby: _id
+                    }
+                }
+            }, {
+                new: true
+            })
+        }
+        const getAllRatings = await Product.findById(prodId);
+        console.log(getAllRatings);
+        let totalRating = getAllRatings.ratings.length;
+        let ratingSum = getAllRatings.ratings.map((item) => item.star).reduce((prev, curr) => prev + curr, 0);
+        let actualRating = Math.round(ratingSum / totalRating);
+        let finalProduct = await Product.findByIdAndUpdate(prodId, {
+            totalrating: actualRating
+        }, {
+            new: true
+        })
+        res.json(finalProduct);
+    } catch (error) {
+        throw new Error(error)
+    }
+})
+
 module.exports = {
     createProduct,
     getAProduct,
     getAllProducts,
     updateProduct,
     deleteProduct,
-    addToWishlist
+    addToWishlist,
+    rating
 }

@@ -4,7 +4,7 @@ const asyncHandler = require("express-async-handler");
 const validateMongodbId = require("../utils/validateMongodbId");
 
 // Create a Blog
-const createBlog = asyncHandler(async (req, res, next) => {
+const createBlog = asyncHandler(async (req, res) => {
     try {
         const newBlog = await Blog.create(req.body);
         res.json({
@@ -16,7 +16,7 @@ const createBlog = asyncHandler(async (req, res, next) => {
 })
 
 // Update a Blog by Id
-const updateBlog = asyncHandler(async (req, res, next) => {
+const updateBlog = asyncHandler(async (req, res) => {
     const { id } = req.params;
     try {
         const updateBlog = await Blog.findByIdAndUpdate(id, req.body, {
@@ -29,7 +29,7 @@ const updateBlog = asyncHandler(async (req, res, next) => {
 })
 
 // Get all blogs
-const getAllBlog = asyncHandler(async (req, res, next) => {
+const getAllBlog = asyncHandler(async (req, res) => {
     try {
         const getAllBlog = await Blog.find();
         res.json(getAllBlog);
@@ -39,7 +39,7 @@ const getAllBlog = asyncHandler(async (req, res, next) => {
 })
 
 // Get a Blog by Id
-const getABlog = asyncHandler(async (req, res, next) => {
+const getABlog = asyncHandler(async (req, res) => {
     const { id } = req.params;
     validateMongodbId(id);
     try {
@@ -56,7 +56,7 @@ const getABlog = asyncHandler(async (req, res, next) => {
 })
 
 // Delete Blogs by Id
-const deleteABlog = asyncHandler(async (req, res, next) => {
+const deleteABlog = asyncHandler(async (req, res) => {
     const { id } = req.params;
     validateMongodbId(id);
     try {
@@ -68,7 +68,7 @@ const deleteABlog = asyncHandler(async (req, res, next) => {
 })
 
 // Like a blog
-const likeBlog = asyncHandler(async (req, res, next) => {
+const likeBlog = asyncHandler(async (req, res) => {
     const { blogId } = req.body;
     validateMongodbId(blogId);
     // Find the blog which you want to be liked
@@ -108,7 +108,7 @@ const likeBlog = asyncHandler(async (req, res, next) => {
 })
 
 // Dislike a blog
-const dislikeBlog = asyncHandler(async (req, res, next) => {
+const dislikeBlog = asyncHandler(async (req, res) => {
     const { blogId } = req.body;
     validateMongodbId(blogId);
     // Find the blog which you want to be disliked
