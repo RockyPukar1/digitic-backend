@@ -2,13 +2,14 @@ const express = require("express");
 const dbConnect = require("./config/db-connect.config");
 const { notFound, errorHandler } = require("./middlewares/error-handling.middleware");
 const app = express();
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 const authRouter = require("./routes/auth.routes");
 const productRouter = require("./routes/product.routes");
 const blogRouter = require("./routes/blog.routes");
 const prodcategoryRouter = require("./routes/prod-category.routes");
 const blogcategoryRouter = require("./routes/blog-category.routes");
 const brandcategoryRouter = require("./routes/brand-category.routes");
+const couponRouter = require("./routes/coupon.routes");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 
@@ -27,6 +28,7 @@ app.use('/api/blog', blogRouter)
 app.use('/api/prod-category', prodcategoryRouter)
 app.use('/api/blog-category', blogcategoryRouter)
 app.use('/api/brand-category', brandcategoryRouter)
+app.use('/api/coupon', couponRouter)
 
 app.use(notFound);
 app.use(errorHandler);
