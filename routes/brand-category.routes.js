@@ -1,6 +1,6 @@
 const express = require("express");
-const { createCategory, udpateCategory, getACategory, getAllCategory, deleteACategory } = require("../controller/brandcategoryCtrl");
-const { authMiddleware, isAdmin } = require("../middlewares/authMiddleware");
+const { createCategory, udpateCategory, getACategory, getAllCategory, deleteACategory } = require("../controller/brand-category.controller");
+const { authMiddleware, isAdmin } = require("../middlewares/auth.middleware");
 const router = express.Router();
 
 // Create a brand category

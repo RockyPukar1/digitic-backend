@@ -1,10 +1,10 @@
-const User = require("../models/userModel");
+const User = require("../models/user.model");
 const asyncHandler = require("express-async-handler");
-const { generateToken } = require("../config/jwToken");
-const validateMongodbId = require("../utils/validateMongodbId");
-const generateRefreshToken = require("../config/refreshToken");
+const { generateToken } = require("../config/jwt.config");
+const validateMongodbId = require("../utils/validate.mongodbId");
+const generateRefreshToken = require("../config/refresh-token.config");
 const jwt = require("jsonwebtoken");
-const sendEmail = require("./emailCtrl");
+const sendEmail = require("./email.controller");
 const crypto = require("crypto");
 // Create a user
 const createUser = asyncHandler(async (req, res) => {

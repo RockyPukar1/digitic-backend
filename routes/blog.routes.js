@@ -1,6 +1,6 @@
 const express = require("express");
-const { createBlog, updateBlog, getAllBlog, getABlog, deleteABlog, likeBlog, dislikeBlog } = require("../controller/blogCtrl");
-const {authMiddleware, isAdmin} = require("../middlewares/authMiddleware");
+const { createBlog, updateBlog, getAllBlog, getABlog, deleteABlog, likeBlog, dislikeBlog } = require("../controller/blog.controller");
+const {authMiddleware, isAdmin} = require("../middlewares/auth.middleware");
 const router = express.Router();
 
 router.route("/create")

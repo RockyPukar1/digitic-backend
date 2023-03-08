@@ -1,7 +1,7 @@
-const Product = require("../models/productModel");
+const Product = require("../models/product.model");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
-const User = require("../models/userModel");
+const User = require("../models/user.model");
 
 // Create a New Product
 const createProduct = asyncHandler(async (req, res) => {

@@ -1,12 +1,12 @@
-const BCategory = require("../models/blogcategoryModel");
+const BrandCategory = require("../models/brand-category.model");
 const asyncHandler = require("express-async-handler");
-const validateMongodbId = require("../utils/validateMongodbId");
+const validateMongodbId = require("../utils/validate.mongodbId");
 
 // Create a category
 const createCategory = asyncHandler(async (req, res) => {
     let data = req.body;
     try {
-        const newCategory = await BCategory.create(data);
+        const newCategory = await BrandCategory.create(data);
         res.json(newCategory);
     } catch (error) {
         throw new Error(error);
@@ -19,7 +19,7 @@ const udpateCategory = asyncHandler(async (req, res) => {
     let { id } = req.params;
     validateMongodbId(id);
     try {
-        const updateCategory = await BCategory.findByIdAndUpdate(id, data, {
+        const updateCategory = await BrandCategory.findByIdAndUpdate(id, data, {
             new: true
         });
         res.json(updateCategory);
@@ -33,7 +33,7 @@ const getACategory = asyncHandler(async (req, res) => {
     let { id } = req.params;
     validateMongodbId(id);
     try {
-        const getACategory = await BCategory.findById(id);
+        const getACategory = await BrandCategory.findById(id);
         res.json(getACategory)
     } catch (error) {
         throw new Error(error);
@@ -43,7 +43,7 @@ const getACategory = asyncHandler(async (req, res) => {
 // Get all category
 const getAllCategory = asyncHandler(async (req, res) => {
     try {
-        const getAllCategory = await BCategory.find();
+        const getAllCategory = await BrandCategory.find();
         res.json(getAllCategory);
     } catch (error) {
         throw new Error(error);
@@ -54,7 +54,7 @@ const deleteACategory = asyncHandler(async (req, res) => {
     let { id } = req.params;
     validateMongodbId(id);
     try {
-        const deleteACategory = await BCategory.findByIdAndDelete(id);
+        const deleteACategory = await BrandCategory.findByIdAndDelete(id);
         res.json(deleteACategory);
     } catch (error) {
         throw new Error(error);

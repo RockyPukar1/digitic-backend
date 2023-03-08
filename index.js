@@ -1,14 +1,14 @@
 const express = require("express");
-const dbConnect = require("./config/dbConnect");
-const { notFound, errorHandler } = require("./middlewares/errorHandler");
+const dbConnect = require("./config/db-connect.config");
+const { notFound, errorHandler } = require("./middlewares/error-handling.middleware");
 const app = express();
 const dotenv = require("dotenv").config();
-const authRouter = require("./routes/authRoutes");
-const productRouter = require("./routes/productRoutes");
-const blogRouter = require("./routes/blogRoutes");
-const prodcategoryRouter = require("./routes/prodcategoryRoutes");
-const blogcategoryRouter = require("./routes/blogcategoryRoutes");
-const brandcategoryRouter = require("./routes/brandcategoryRoutes");
+const authRouter = require("./routes/auth.routes");
+const productRouter = require("./routes/product.routes");
+const blogRouter = require("./routes/blog.routes");
+const prodcategoryRouter = require("./routes/prod-category.routes");
+const blogcategoryRouter = require("./routes/blog-category.routes");
+const brandcategoryRouter = require("./routes/brand-category.routes");
 const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 

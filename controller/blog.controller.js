@@ -1,7 +1,7 @@
-const Blog = require("../models/blogModel");
-const User = require("../models/userModel");
+const Blog = require("../models/blog.model");
+const User = require("../models/user.model");
 const asyncHandler = require("express-async-handler");
-const validateMongodbId = require("../utils/validateMongodbId");
+const validateMongodbId = require("../utils/validate.mongodbId");
 
 // Create a Blog
 const createBlog = asyncHandler(async (req, res) => {
