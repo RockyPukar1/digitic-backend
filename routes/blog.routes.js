@@ -1,6 +1,8 @@
 const express = require("express");
 const { createBlog, updateBlog, getAllBlog, getABlog, deleteABlog, likeBlog, dislikeBlog } = require("../controller/blog.controller");
+const { uploadImages } = require("../controller/product.controller");
 const {authMiddleware, isAdmin} = require("../middlewares/auth.middleware");
+const { uploadPhoto, blogImgResize } = require("../middlewares/upload-images.middleware");
 const router = express.Router();
 
 router.route("/create")
@@ -24,5 +26,7 @@ router.route("/edit-one/:id")
 router.route("/delete-one/:id")
     // Delete a blog by Id
     .delete(authMiddleware, isAdmin, deleteABlog)
+router.route("/upload/:id")
+    .put(authMiddleware, isAdmin, uploadPhoto.array('images', 2), blogImgResize, uploadImages)
 
 module.exports = router;

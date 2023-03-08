@@ -8,7 +8,7 @@ const multerStorage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        cb(null, file.filename + '-' + uniqueSuffix + '.jpeg')
+        cb(null, file.fieldname + '-' + uniqueSuffix + '.jpeg')
     },
 })
 
@@ -35,7 +35,7 @@ const productImgResize = async (req, res, next) => {
         return next();
     }
     await Promise.all(req.files.map(async (file) => {
-        await sharp(file.path).resize(300, 300).toFormat('jpeg').jpeg({ quality: 90 }).toFile(`public/images/products/${file.filename}`);
+        await sharp(file.path).resize(300, 300).toFormat('jpeg').jpeg({ quality: 90 }).toFile(`public/images/products/${file.filename}`).toFile(`public/images/products/${file.filename}`);
     }));
     next();
 }
@@ -45,7 +45,7 @@ const blogImgResize = async (req, res, next) => {
         return next();
     }
     await Promise.all(req.files.map(async (file) => {
-        await sharp(file.path).resize(300, 300).toFormat('jpeg').jpeg({ quality: 90 }).toFile(`public/images/blogs/${file.filename}`);
+        await sharp(file.path).resize(300, 300).toFormat('jpeg').jpeg({ quality: 90 }).toFile(`public/images/blogs/${file.filename}`).toFile(`public/images/blogs/${file.filename}`);
     }));
     next();
 }

@@ -1,7 +1,10 @@
 const Product = require("../models/product.model");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
+const fs = require("fs");
 const User = require("../models/user.model");
+const validateMongodbId = require("../utils/validate.mongodbId");
+const cloudinaryUploadImg = require("../utils/cloudinary");
 
 // Create a New Product
 const createProduct = asyncHandler(async (req, res) => {
@@ -19,6 +22,7 @@ const createProduct = asyncHandler(async (req, res) => {
 // Update a product by Id
 const updateProduct = asyncHandler(async (req, res) => {
     const { id } = req.params;
+    validateMongodbId(id);
     try {
         if (req.body.title) {
             req.body.slug = slugify(req.body.title);
@@ -35,6 +39,7 @@ const updateProduct = asyncHandler(async (req, res) => {
 // Delete product by Id
 const deleteProduct = asyncHandler(async (req, res) => {
     const { id } = req.params;
+    validateMongodbId(id);
     try {
         const deleteProduct = await Product.findByIdAndDelete(id);
         res.json(deleteProduct);
@@ -46,6 +51,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 // Get a Product by Id
 const getAProduct = asyncHandler(async (req, res) => {
     const { id } = req.params;
+    validateMongodbId(id);
     try {
         const findProduct = await Product.findById(id);
         res.json(findProduct)
@@ -174,7 +180,27 @@ const rating = asyncHandler(async (req, res) => {
 })
 
 const uploadImages = asyncHandler(async (req, res) => {
-    console.log(req.files);
+    const {id} = req.params;
+    validateMongodbId(id);
+    try {
+        const uploader = (path) => cloudinaryUploadImg(path, 'images');
+        const urls = [];
+        const files = req.files;
+        for (const file of files) {
+            const {path} = file;
+            const newPath = await uploader(path);
+            urls.push(newPath);
+            fs.unlinkSync(path);
+        }
+        const findProduct = await Product.findByIdAndUpdate(id, {
+            images: urls.map((file) => file)
+        }, {
+            new: true
+        })
+        res.json(findProduct);
+    } catch (error) {
+        throw new Error(error)
+    }
 })
 
 module.exports = {
