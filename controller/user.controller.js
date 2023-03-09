@@ -391,6 +391,19 @@ const applyCoupon = asyncHandler(async (req, res) => {
     } catch (error) {
         throw new Error(error);
     }
+});
+
+const createOrder = asyncHandler(async (req, res) => {
+    const {COD, couponApplied} = req.body;
+    const {_id} = req.user;
+    validateMongodbId(_id);
+    try {
+        if (!COD) {
+            throw new Error("Create cash order failed");
+        }
+    } catch (error) {
+        throw new Error(error);
+    }
 })
 
 module.exports = {
