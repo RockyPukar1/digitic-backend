@@ -1,4 +1,6 @@
 const User = require("../models/user.model");
+const Product = require("../models/product.model")
+const Cart = require("../models/cart.model")
 const asyncHandler = require("express-async-handler");
 const { generateToken } = require("../config/jwt.config");
 const validateMongodbId = require("../utils/validate.mongodbId");
@@ -6,6 +8,7 @@ const generateRefreshToken = require("../config/refresh-token.config");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("./email.controller");
 const crypto = require("crypto");
+
 // Create a user
 const createUser = asyncHandler(async (req, res) => {
     const email = req.email;
@@ -234,7 +237,7 @@ const resetPassword = asyncHandler(async (req, res) => {
     const hashedToken = crypto.createHash('sha256').update(token).digest("hex");
     const user = await User.findOne({
         passwordResetToken: hashedToken,
-        passwordResetExpires: {$gt: Date.now()}
+        passwordResetExpires: { $gt: Date.now() }
     });
     if (!user) {
         throw new Error("Token expired, Please try again later");
@@ -280,7 +283,7 @@ const adminLogin = asyncHandler(async (req, res) => {
 
 // Get wishlist
 const getWishlist = asyncHandler(async (req, res) => {
-    const {_id} = req.user;
+    const { _id } = req.user;
     validateMongodbId(_id);
     try {
         const findUser = await User.findById(_id).populate('wishlist');
@@ -292,7 +295,7 @@ const getWishlist = asyncHandler(async (req, res) => {
 
 // Save user address
 const saveAddress = asyncHandler(async (req, res) => {
-    const {_id} = req.user;
+    const { _id } = req.user;
     validateMongodbId(_id);
     try {
         const updatedUser = await User.findByIdAndUpdate(_id, {
@@ -304,7 +307,36 @@ const saveAddress = asyncHandler(async (req, res) => {
     } catch (error) {
         throw new Error(error);
     }
-}) 
+})
+
+// User cart functionality
+const userCart = asyncHandler(async (req, res) => {
+    const { cart } = req.body;
+    const { _id } = req.user;
+    validateMongodbId(_id);
+    try {
+        let products = [];
+        const user = await User.findById(_id);
+        // Check if user already have products in cart
+        const alreadyExistCart = await Cart.findOne({orderby: user._id});
+        if (alreadyExistCart) {
+            alreadyExistCart.remove();
+        }
+        for (let i = 0; i < cart.length; i++) {
+            let object = {};
+            object.product = cart[i]._id;
+            object.count = cart[i].count;
+            object.color = cart[i].color;
+            let getPrice = await Product.findById(cart[i]._id).select('price').exec();
+            object.price = getPrice.price;
+            products.push(object);
+        }
+        console.log(products);
+        res.json("HEllo")
+    } catch (error) {
+        throw new Error(error);
+    }
+})
 
 module.exports = {
     createUser,
@@ -322,5 +354,6 @@ module.exports = {
     resetPassword,
     adminLogin,
     getWishlist,
-    saveAddress
+    saveAddress,
+    userCart
 }

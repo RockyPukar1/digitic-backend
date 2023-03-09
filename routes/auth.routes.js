@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createUser, loginUserCtrl, getAllUser, getAUser, deleteAUser, updateAUser, blockAUser, unblockAUser, handleRefreshToken, logout, updatePassword, forgotPasswordToken, resetPassword, adminLogin, getWishlist, saveAddress } = require("../controller/user.controller");
+const { createUser, loginUserCtrl, getAllUser, getAUser, deleteAUser, updateAUser, blockAUser, unblockAUser, handleRefreshToken, logout, updatePassword, forgotPasswordToken, resetPassword, adminLogin, getWishlist, saveAddress, userCart } = require("../controller/user.controller");
 const { authMiddleware, isAdmin } = require("../middlewares/auth.middleware");
 
 // Register a user
@@ -64,4 +64,7 @@ router.route("/reset-password/:token")
 
 router.route('/get-wishlist')
     .get(authMiddleware, getWishlist)
+
+router.route("/cart")
+    .post(authMiddleware, userCart)
 module.exports = router;
