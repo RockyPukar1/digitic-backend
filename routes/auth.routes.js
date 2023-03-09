@@ -77,6 +77,7 @@ router.route("/cart/apply-coupon")
     .post(authMiddleware, applyCoupon)
 
 router.route("/empty-cart")
+    // Delete cart
     .delete(authMiddleware, emptyCart)
 
 router.route("/cart/cash-order")
