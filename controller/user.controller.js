@@ -82,6 +82,7 @@ const getAllUser = asyncHandler(async (req, res) => {
 // Update a user by ID
 const updateAUser = asyncHandler(async (req, res) => {
     const { _id } = req.user;
+    validateMongodbId(_id);
     const { firstname, lastname, mobile, password, role } = req.body;
     try {
         const updateAUser = await User.findByIdAndUpdate(_id, {
@@ -190,8 +191,8 @@ const logout = asyncHandler(async (req, res) => {
 // Update password
 const updatePassword = asyncHandler(async (req, res) => {
     const { _id } = req.user;
-    const { password } = req.body;
     validateMongodbId(_id);
+    const { password } = req.body;
     const user = await User.findById(_id);
     if (password) {
         user.password = password;
@@ -280,6 +281,7 @@ const adminLogin = asyncHandler(async (req, res) => {
 // Get wishlist
 const getWishlist = asyncHandler(async (req, res) => {
     const {_id} = req.user;
+    validateMongodbId(_id);
     try {
         const findUser = await User.findById(_id).populate('wishlist');
         res.json(findUser);
@@ -287,6 +289,22 @@ const getWishlist = asyncHandler(async (req, res) => {
         throw new Error(error);
     }
 })
+
+// Save user address
+const saveAddress = asyncHandler(async (req, res) => {
+    const {_id} = req.user;
+    validateMongodbId(_id);
+    try {
+        const updatedUser = await User.findByIdAndUpdate(_id, {
+            address: req.body.address
+        }, {
+            new: true
+        })
+        res.json(updatedUser);
+    } catch (error) {
+        throw new Error(error);
+    }
+}) 
 
 module.exports = {
     createUser,
@@ -303,5 +321,6 @@ module.exports = {
     forgotPasswordToken,
     resetPassword,
     adminLogin,
-    getWishlist
+    getWishlist,
+    saveAddress
 }

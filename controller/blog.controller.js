@@ -18,6 +18,7 @@ const createBlog = asyncHandler(async (req, res) => {
 // Update a Blog by Id
 const updateBlog = asyncHandler(async (req, res) => {
     const { id } = req.params;
+    validateMongodbId(id);
     try {
         const updateBlog = await Blog.findByIdAndUpdate(id, req.body, {
             new: true
@@ -148,14 +149,14 @@ const dislikeBlog = asyncHandler(async (req, res) => {
 })
 
 const uploadImages = asyncHandler(async (req, res) => {
-    const {id} = req.params;
+    const { id } = req.params;
     validateMongodbId(id);
     try {
         const uploader = (path) => cloudinaryUploadImg(path, 'images');
         const urls = [];
         const files = req.files;
         for (const file of files) {
-            const {path} = file;
+            const { path } = file;
             const newPath = await uploader(path);
             urls.push(newPath);
             fs.unlinkSync(path);

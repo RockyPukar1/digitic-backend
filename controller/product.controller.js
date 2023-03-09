@@ -111,7 +111,9 @@ const getAllProducts = asyncHandler(async (req, res) => {
 // Add to wishlist
 const addToWishlist = asyncHandler(async (req, res) => {
     const { _id } = req.user;
+    validateMongodbId(_id);
     const { prodId } = req.body;
+    validateMongodbId(prodId);
     try {
         const user = await User.findById(_id);
         const alreadyAdded = user.wishlist.find(id => id.toString() === prodId);
@@ -138,15 +140,17 @@ const addToWishlist = asyncHandler(async (req, res) => {
 // Rating a product
 const rating = asyncHandler(async (req, res) => {
     const { _id } = req.user;
+    validateMongodbId(_id);
     const { star, prodId, comment } = req.body;
+    validateMongodbId(prodId)
     try {
         const product = await Product.findById(prodId);
         let alreadyRated = product.ratings.find(userId => userId.postedby.toString() === _id.toString());
         if (alreadyRated) {
             const updateRating = await Product.updateOne({
-                ratings: {$elemMatch: alreadyRated}
+                ratings: { $elemMatch: alreadyRated }
             }, {
-                $set: {"ratings.$.star": star, "ratings.$.comment": comment }
+                $set: { "ratings.$.star": star, "ratings.$.comment": comment }
             }, {
                 new: true
             })
@@ -180,14 +184,14 @@ const rating = asyncHandler(async (req, res) => {
 })
 
 const uploadImages = asyncHandler(async (req, res) => {
-    const {id} = req.params;
+    const { id } = req.params;
     validateMongodbId(id);
     try {
         const uploader = (path) => cloudinaryUploadImg(path, 'images');
         const urls = [];
         const files = req.files;
         for (const file of files) {
-            const {path} = file;
+            const { path } = file;
             const newPath = await uploader(path);
             urls.push(newPath);
             fs.unlinkSync(path);
