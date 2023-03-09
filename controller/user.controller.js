@@ -4,6 +4,7 @@ const Cart = require("../models/cart.model")
 const Coupon = require("../models/coupon.model");
 const Order = require("../models/order.model");
 const uniqid = require("uniqid");
+const bcrypt = require("bcrypt")
 const asyncHandler = require("express-async-handler");
 const { generateToken } = require("../config/jwt.config");
 const validateMongodbId = require("../utils/validate.mongodbId");
@@ -89,7 +90,9 @@ const getAllUser = asyncHandler(async (req, res) => {
 const updateAUser = asyncHandler(async (req, res) => {
     const { _id } = req.user;
     validateMongodbId(_id);
-    const { firstname, lastname, mobile, password, role } = req.body;
+    let { firstname, lastname, mobile, password, role } = req.body;
+    const salt = await bcrypt.genSaltSync(10);
+    password = await bcrypt.hash(password, salt);
     try {
         const updateAUser = await User.findByIdAndUpdate(_id, {
             firstname,
