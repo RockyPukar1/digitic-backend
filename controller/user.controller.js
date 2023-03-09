@@ -245,6 +245,49 @@ const resetPassword = asyncHandler(async (req, res) => {
     res.json(user);
 })
 
+// admin login
+const adminLogin = asyncHandler(async (req, res) => {
+    const { email, password } = req.body;
+    // check if user exists or not
+    const findAdmin = await User.findOne({ email });
+    if (findAdmin.role !== 'admin') {
+        throw new Error("Not authorized");
+    }
+    if (findAdmin && await findAdmin.isPasswordMatched(password)) {
+        const refreshToken = await generateRefreshToken(findAdmin._id);
+        const updateUser = await User.findByIdAndUpdate(findAdmin.id, {
+            refreshToken
+        }, {
+            new: true
+        });
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            maxAge: 72 * 60 * 60 * 1000
+        })
+        res.json({
+            _id: findAdmin._id,
+            firstname: findAdmin.firstname,
+            lastname: findAdmin.lastname,
+            email: findAdmin.email,
+            mobile: findAdmin.mobile,
+            token: generateToken(findAdmin._id)
+        });
+    } else {
+        throw new Error("Invalid Credentials");
+    }
+})
+
+// Get wishlist
+const getWishlist = asyncHandler(async (req, res) => {
+    const {_id} = req.user;
+    try {
+        const findUser = await User.findById(_id).populate('wishlist');
+        res.json(findUser);
+    } catch (error) {
+        throw new Error(error);
+    }
+})
+
 module.exports = {
     createUser,
     loginUserCtrl,
@@ -258,5 +301,7 @@ module.exports = {
     logout,
     updatePassword,
     forgotPasswordToken,
-    resetPassword
+    resetPassword,
+    adminLogin,
+    getWishlist
 }
