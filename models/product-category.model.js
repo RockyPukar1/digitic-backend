@@ -10,7 +10,7 @@ var prodcategorySchema = new mongoose.Schema({
     }
 } , {
     timestamps: true
-});
+})
 
 //Export the model
 module.exports = mongoose.model('PCategory', prodcategorySchema);
