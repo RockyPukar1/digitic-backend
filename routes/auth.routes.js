@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createUser, loginUserCtrl, getAllUser, getAUser, deleteAUser, updateAUser, blockAUser, unblockAUser, handleRefreshToken, logout, updatePassword, forgotPasswordToken, resetPassword, adminLogin, getWishlist, saveAddress, userCart, getUserCart, emptyCart, applyCoupon } = require("../controller/user.controller");
+const { createUser, loginUserCtrl, getAllUser, getAUser, deleteAUser, updateAUser, blockAUser, unblockAUser, handleRefreshToken, logout, updatePassword, forgotPasswordToken, resetPassword, adminLogin, getWishlist, saveAddress, userCart, getUserCart, emptyCart, applyCoupon, createOrder, getOrders, updateOrderStatus } = require("../controller/user.controller");
 const { authMiddleware, isAdmin } = require("../middlewares/auth.middleware");
 
 // Register a user
@@ -78,4 +78,13 @@ router.route("/cart/apply-coupon")
 
 router.route("/empty-cart")
     .delete(authMiddleware, emptyCart)
+
+router.route("/cart/cash-order")
+    .post(authMiddleware, createOrder)
+
+router.route("/get-orders")
+    .get(authMiddleware, getOrders)
+
+router.route("/update-order/:id")
+    .put(authMiddleware, isAdmin, updateOrderStatus)
 module.exports = router;
